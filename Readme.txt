@@ -51,9 +51,14 @@ terrazzo ; terrazzo를 K20에 이식하여 동작을 검토함
      signal RGB는 코드를 그대로 make하여 별로 펌웨어로 만듬 (이 펌웨어는 VIA, reMAP, Signal RGB 모두 사용가능, 동시는 아님)
 
        vial은 검토 중
-                     
+ 
+<240206>
+pulsar 디렉토리에서 xboard_qs가 최종이였는데, QMK에 PR하기위해 코드 정리를 하면서..
+xboard_qsv1 ~ 5까지 디렉토리가 추가됨
+최종정리된것은 
 
-
+pulsar_pr 디렉토리를 새로 만들어서 완료함 여기서 Dynamic macro되게 rules.mk 수정함
+차 후에 펌업키를 삭제해야함
 ----------------------------------------------------------------------------------------------
 
 < Metable Vender ID = 0x1C6C >
@@ -69,3 +74,6 @@ METABLE K20 RGB = 0xF021           (waycos에서 개발했던것 2 encoder)
 
 METABLE Designer T11 RGB = 0xF030  (Delux 한손키보드, 1 encoder, oled)
 METABLE Designer T12 RGB = 0xF032  (Delux 한손키보드, no encoder)
+
+< Pulsar Vender ID = 0x3710 >
+Pulsar XBOARD QS(Pulsar CNC) = 0x2400
