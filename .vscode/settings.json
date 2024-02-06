@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "pulsar_cnc.h": "c",
+        "*.h__": "c"
+    }
+}
