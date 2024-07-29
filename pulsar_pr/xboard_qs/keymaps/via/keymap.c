@@ -149,7 +149,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         INIT_3S,    KC_BRID, KC_BRIU, KC_TASK, KC_WSCH, KC_DIC, KC_MSEL, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,       KC_TMODE, KC_CALC, KC_WHOM,KC_LOCK2, 
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______,  NK_OFF,  NK_ON,  RGB_TOG,          RGB_SAI, RGB_HUI, RGB_MOD,
         _______, KC_BTN1, KC_MS_U, KC_BTN2, KC_WH_U, _______, _______, _______, _______, _______, _______, _______, _______, _______,          RGB_SAD, RGB_HUD, RGB_RMOD,
-        _______, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_D, _______, _______, _______, _______, _______, _______, QK_BOOT,          _______,
+        _______, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_D, _______, _______, _______, _______, _______, _______, _______,          _______,
         _______,      KC_BTN4, KC_BTN3, KC_BTN5, _______, KC_S_LED, _______, _______,  _______, _______, _______,            _______,                   RGB_VAI,
         _______, KC_TGUI, _______,                             _______,                            _______,_______, _______,  KC_TPC,          RGB_SPD, RGB_VAD, RGB_SPI),
 

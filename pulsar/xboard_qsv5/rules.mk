@@ -17,3 +17,5 @@ DYNAMIC_MACRO_ENABLE = yes
 WPM_ENABLE = yes
 
 ENCODER_ENABLE = yes        # Enable Encoder
+
+DEBOUNCE_TYPE = sym_eager_pk		# asym_eager_defer_pk, sym_eager_pk, sym_eager_pr

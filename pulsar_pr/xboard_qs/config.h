@@ -28,10 +28,11 @@
 #define GPIO_TEST_DEBUG     C9      // C3-LED / C9-GPIO PAD
 
 /* RGB Underglow or WS2812 RGB Matirx  <spi driver > */
-#define WS2812_SPI_DRIVER           SPID2    
-#define WS2812_SPI_MOSI_PAL_MODE    0      
+#define WS2812_SPI_DRIVER           SPID2
+#define WS2812_SPI_MOSI_PAL_MODE    0
 #define WS2812_SPI_SCK_PIN          B13
-#define WS2812_SPI_SCK_PAL_MODE     5   
-#define WS2812_SPI_DIVISOR          16  
+#define WS2812_SPI_SCK_PAL_MODE     5
+#define WS2812_SPI_DIVISOR          16
 #define WS2812_SPI_USE_CIRCULAR_BUFFER
 
+#define    DYNAMIC_MACRO_DELAY      10

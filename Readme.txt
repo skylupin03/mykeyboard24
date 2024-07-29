@@ -1,4 +1,4 @@
-1.  k20emul ; 최초 K20에 F411보드를 붙여서 QMK 올림 
+u1.  k20emul ; 최초 K20에 F411보드를 붙여서 QMK 올림 
               - custom key & LED
               - 3731 LED Matrix
 
@@ -59,6 +59,25 @@ xboard_qsv1 ~ 5까지 디렉토리가 추가됨
 
 pulsar_pr 디렉토리를 새로 만들어서 완료함 여기서 Dynamic macro되게 rules.mk 수정함
 차 후에 펌업키를 삭제해야함
+(xboard_qs수정사항 ; readme.md에서 제품이름을 XBOARD --> XBOARD QS
+                             info.json에서 ver을 0.0.1 --> 0.0.2
+                            config.h에서 #define USB_SUSPEND_WAKEUP_DELAY 200 을 추가
+                            keymap.c에서 MAC용 KC_SNAP SCMD(KC_5) 변경 / F layer  변경 / MAC에서 KC_TGUI 삭제 WIN_LOCK LED도 동작안되게 / WIN/MAC 키 LED 켜기
+xboard_qsv1수정 ; rules.mk에서 코맨트처리된 부분, 사용하지 않는 부분 모두 삭제
+                         readme.md 에서 업그레이드키를 "ESC"에서 "U"로 수정
+                         mcuconf.h에서 SPI2와 TIM3만 남기고 모두 삭제
+                         halconf.h에서 코맨트처리된 부분, 사용하지 않는 부분 모두 삭제
+                         config.h에서 LED GPIO, 기타 사용하지 않는 부분 삭제, OLED, I2C, 원샷기능, 조이스틱, 리더, 오토시프트등 기능 삭제
+                         gfxfont.c 삭제
+                         keymap.c에서 oled, 탭댄스, 조이스틱등 그리고 사용하지 않는 부분 삭제
+                         info.json 에서 Jimmy이름을 James로 변경
+                         xboard_qsv1.c 사용안하는 GPIO기능 삭제, 기타 코맨트 부분 삭제
+                         xboard_qsv1.h LED펑션 선언 삭제
+
+xboard_qsv2수정 ; 
+                         
+
+ 
 ----------------------------------------------------------------------------------------------
 
 < Metable Vender ID = 0x1C6C >
