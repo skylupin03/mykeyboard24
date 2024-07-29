@@ -40,6 +40,34 @@ typedef union {
 
 user_config_t user_config;
 
+#define SNAP_TAP_MODE_ON            true
+#define SNAP_TAP_MODE_OFF           false
+
+#define SNAP_TAP_FLAG_KEY_1_PRESS   0x0001
+#define SNAP_TAP_FLAG_KEY_2_PRESS   0x0002
+#define SNAP_TAP_FLAG_KEY_1_MASK    0xFFFE
+#define SNAP_TAP_FLAG_KEY_2_MASK    0xFFFD
+
+//#define SNAP_TAP_FLAG_KEY_1_SEND    0x0100
+//#define SNAP_TAP_FLAG_KEY_2_SEND    0x0200
+
+#define MAX_SNAP_TAP_KEY_PAIR       4
+#define MAX_SNAP_TAP_KEY            2
+
+typedef struct {
+	uint16_t key_map[MAX_SNAP_TAP_KEY];
+	uint16_t flag[MAX_SNAP_TAP_KEY];
+	uint16_t repeat_key;
+} snap_tap_info_t;
+
+static bool g_is_snap_tap_mode = false;
+static snap_tap_info_t g_tbl_snap_tap_key[MAX_SNAP_TAP_KEY_PAIR] = {   
+                                                { { KC_A, KC_D }, { 0, 0 }, KC_NO, },
+                                                { { KC_W, KC_S }, { 0, 0 }, KC_NO, },
+                                                { { KC_LEFT, KC_RIGHT }, { 0, 0 }, KC_NO, },
+                                                { { KC_UP, KC_DOWN }, { 0, 0 }, KC_NO, },
+                                            };
+
 //-=-------------------------------------------
     enum _layer { WIN_BASE = 0, WIN_FN, MAC_BASE, MAC_FN };
 
@@ -64,6 +92,7 @@ user_config_t user_config;
         KC_TPC,             // KM Switch PC1<-->PC2 Toggle
         INIT_3S,            // EE_CLR(EEPROM CLear)(공장초기화)를 3초이상 눌러야 동작
         KC_S_LED,            // Change Status LED Brightness
+        KC_T_ST,			// Toggle Snap Tap Mode
         NEW_SAFE_RANGE = SAFE_RANGE
 #else
     KC_TGUI = SAFE_RANGE,   // Toggle between GUI Lock or Unlock
@@ -150,7 +179,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______,  NK_OFF,  NK_ON,  RGB_TOG,          RGB_SAI, RGB_HUI, RGB_MOD,
         _______, KC_BTN1, KC_MS_U, KC_BTN2, KC_WH_U, _______, _______, _______, _______, _______, _______, _______, _______, _______,          RGB_SAD, RGB_HUD, RGB_RMOD,
         _______, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_D, _______, _______, _______, _______, _______, _______, _______,          _______,
-        _______,      KC_BTN4, KC_BTN3, KC_BTN5, _______, KC_S_LED, _______, _______,  _______, _______, _______,            _______,                   RGB_VAI,
+        KC_T_ST,      KC_BTN4, KC_BTN3, KC_BTN5, _______, KC_S_LED, _______, _______,  _______, _______, _______,            _______,                   RGB_VAI,
         _______, KC_TGUI, _______,                             _______,                            _______,_______, _______,  KC_TPC,          RGB_SPD, RGB_VAD, RGB_SPI),
 
     [MAC_BASE] = LAYOUT( /* Layer 2 ; MAC Base Layer */
@@ -168,7 +197,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, NK_OFF,   NK_ON,  RGB_TOG,          RGB_SAI, RGB_HUI, RGB_MOD,
         _______, KC_BTN1, KC_MS_U, KC_BTN2, KC_WH_U, _______, _______, _______, _______, _______, _______, _______, _______, _______,          RGB_SAD, RGB_HUD, RGB_RMOD,
         _______, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_D, _______, _______, _______, _______, _______, _______, _______,          _______,
-        _______,         KC_BTN4, KC_BTN3, KC_BTN5, _______, KC_S_LED, _______, _______, _______, _______, _______,          _______,                   RGB_VAI,
+        KC_T_ST,         KC_BTN4, KC_BTN3, KC_BTN5, _______, KC_S_LED, _______, _______, _______, _______, _______,          _______,                   RGB_VAI,
         _______, _______, _______,                         _______,                               _______, _______, _______,  KC_TPC,          RGB_SPD, RGB_VAD, RGB_SPI)
         };
 //-----------------------------------------------------------------
@@ -181,6 +210,124 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
 };
 #endif // ENCODER_MAP_ENABLE
 //-----------------------------------------------------------------
+
+bool is_snap_tap_mode(void) {
+    return g_is_snap_tap_mode;
+}
+void set_snap_tap_mode(bool mode) {
+    g_is_snap_tap_mode = mode;
+}
+
+bool press_snap_tap_key(uint16_t keycode)
+{
+/*    
+    case KC_A:
+        if (record->event.pressed) {
+            if (1 == g_snap_tab_info.flag2) {
+                unregister_code(KC_D);
+            }
+            g_snap_tab_info.flag1 = 1;
+            g_snap_tab_info.repeat_key = KC_A;
+        } 
+*/
+
+    bool key_found = false;
+    uint16_t pair_index = 0;
+    uint16_t key_index = 0;
+        
+    for (int16_t i = 0; i < MAX_SNAP_TAP_KEY_PAIR; i++) {
+        for (int16_t j = 0; j < MAX_SNAP_TAP_KEY; j++) {
+            if (g_tbl_snap_tap_key[i].key_map[j] == keycode) {
+                pair_index = i;
+                key_index = j;
+                key_found = true;
+               goto key_found_done;
+            }
+        }
+    }
+
+key_found_done:
+    if (!key_found) { return false; }
+    
+    snap_tap_info_t* p_sanp_tap = &g_tbl_snap_tap_key[pair_index];
+    uint16_t another_key_index = (0 == key_index) ? 1 : 0;
+    uint16_t another_key = p_sanp_tap->key_map[another_key_index];
+
+#ifdef CONSOLE_ENABLE
+    uprintf("+ keycode = 0x%04X, pair_index=%d, key_index=%d, another_key=0x%04x, flag1=%d, flag2=%d, Repeat_key=0x%04x\n", 
+            keycode, pair_index, key_index, another_key, p_sanp_tap->flag[0], p_sanp_tap->flag[1], p_sanp_tap->repeat_key);
+#endif 
+
+    if (1 == p_sanp_tap->flag[another_key_index]) {
+        unregister_code(another_key);
+    }
+
+    p_sanp_tap->flag[key_index] = 1;;
+    p_sanp_tap->repeat_key = keycode;
+
+    return true;
+}
+
+bool release_snap_tap_key(uint16_t keycode)
+{
+/*    
+    case KC_A:
+        if (record->event.pressed) {
+            :
+        } else {
+            if ((1 == g_snap_tab_info.flag2) && (KC_A == g_snap_tab_info.repeat_key)) {
+                unregister_code(KC_A);
+                register_code(KC_D);
+                g_snap_tab_info.repeat_key = KC_D;
+            } 
+            if (0 == g_snap_tab_info.flag2) {
+                g_snap_tab_info.repeat_key = KC_NO;
+            }
+            g_snap_tab_info.flag1 = 0;
+        }
+*/
+
+    bool key_found = false;
+    uint16_t pair_index = 0;
+    uint16_t key_index = 0;
+        
+    for (int16_t i = 0; i < MAX_SNAP_TAP_KEY_PAIR; i++) {
+        for (int16_t j = 0; j < MAX_SNAP_TAP_KEY; j++) {
+            if (g_tbl_snap_tap_key[i].key_map[j] == keycode) {
+                pair_index = i;
+                key_index = j;
+                key_found = true;
+               goto key_found_done;
+            }
+        }
+    }
+
+key_found_done:
+    if (!key_found) { return false; }
+    
+    snap_tap_info_t* p_sanp_tap = &g_tbl_snap_tap_key[pair_index];
+    uint16_t another_key_index = (0 == key_index) ? 1 : 0;
+    uint16_t another_key = p_sanp_tap->key_map[another_key_index];
+
+#ifdef CONSOLE_ENABLE
+    uprintf("- keycode = 0x%04X, pair_index=%d, key_index=%d, another_key=0x%04x, flag1=%d, flag2=%d, Repeat_key=0x%04x\n", 
+            keycode, pair_index, key_index, another_key, p_sanp_tap->flag[0], p_sanp_tap->flag[1], p_sanp_tap->repeat_key);
+#endif 
+
+    if ((1 == p_sanp_tap->flag[another_key_index]) && (p_sanp_tap->repeat_key == keycode)) {
+        unregister_code(keycode);
+        register_code(another_key);
+        p_sanp_tap->repeat_key = another_key;
+    }
+
+    if (0 == p_sanp_tap->flag[another_key_index]) {
+        p_sanp_tap->repeat_key = KC_NO;
+    }
+
+    p_sanp_tap->flag[key_index] = 0;
+    
+    return true;
+}
 
 #define HCS(report) host_consumer_send(record->event.pressed ? report : 0); return false
 #define HSS(report) host_system_send(record->event.pressed ? report : 0); return false
@@ -210,6 +357,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {                // Toggle GUI lock on key press
                 win_key_locked = !win_key_locked;
  //               SEND_STRING("sRGB & VIA ; Ver 1.10");
+            }
+            break;
+
+        case KC_A:
+        case KC_D:
+        case KC_S:
+        case KC_W:
+        case KC_RIGHT:
+        case KC_LEFT:
+        case KC_DOWN:
+        case KC_UP:
+            if (is_snap_tap_mode()) {
+                if (record->event.pressed) {
+                    press_snap_tap_key(keycode);
+                } else {
+                    release_snap_tap_key(keycode);
+                }
             }
             break;
 
@@ -317,6 +481,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 eeconfig_update_user(user_config.raw); // Writes the new status to EEPROM
             }
             return false;
+
+        case KC_T_ST:
+            if (record->event.pressed) {
+                if (SNAP_TAP_MODE_ON == is_snap_tap_mode()) {
+                    set_snap_tap_mode(SNAP_TAP_MODE_OFF);
+                } else {
+                    set_snap_tap_mode(SNAP_TAP_MODE_ON);
+                }
+            }
+            break;
 
         default:
             return true;   // Process all other keycodes normally
@@ -426,6 +600,11 @@ bool rgb_matrix_indicators_user(void)  {
             else            rgb_matrix_set_color(101,Status_LED_Bright_value,0,0);      // MAC Mode & PC1
             break;
     }
+
+    if (SNAP_TAP_MODE_ON == is_snap_tap_mode()) {
+        rgb_matrix_set_color(97, Status_LED_Bright_value, Status_LED_Bright_value, Status_LED_Bright_value);
+    }
+
     return TRUE;
 }
 #endif
